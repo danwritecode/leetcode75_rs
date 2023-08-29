@@ -5,7 +5,7 @@ fn main() {
 struct Solution {}
 
 impl Solution {
-    pub fn reverse_words(s: String) -> String {
+    pub fn reverse_words_naive(s: String) -> String {
         let mut words = s
             .split(' ')
             .filter(|&x| x != "")
@@ -33,8 +33,12 @@ impl Solution {
             .trim()
             .to_string();
 
-
         return rev_words;
+    }
+
+    pub fn reverse_words(s: String) -> String {
+        let rev = s.split_whitespace().rev().collect::<Vec<&str>>();
+        rev.join(" ")
     }
 }
 
