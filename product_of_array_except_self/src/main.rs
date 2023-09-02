@@ -20,37 +20,56 @@ impl Solution {
 
     pub fn product_except_self(nums: Vec<i32>) -> Vec<i32> {
         let nums_len = nums.len();
-        let mut nums_product:Vec<i32> = nums.clone(); 
-        let last_index = nums_len - 1;
-        let mut cur_mul_by_index = 0;
-        let mut loop_index = 0;
+        let end_index = nums_len - 1;
+        let mut nums_product:Vec<i32> = vec![0; nums_len];
+
+        let mut cur_product = 0;
+        let mut mul_index = 0;
+        let mut index = 0;
 
         loop {
-            println!("loop_index {}", loop_index);
-            let mul_by = nums[cur_mul_by_index];
-            let n = nums_product[loop_index];
-
-            if loop_index != cur_mul_by_index {
-                println!("multiplying: {} by: {}", n, mul_by);
-                let product = n * mul_by;
-                nums_product[loop_index] = product;
-                println!("updated nums_product: {:?}", nums_product);
+            // determine cur_product base
+            if mul_index == 0 {
+                if mul_index != index {
+                    cur_product = nums[mul_index]; 
+                    mul_index += 1;
+                    continue
+                } else {
+                    // this will only ever happen at 0,0 indexes
+                    cur_product = nums[mul_index + 1];
+                    mul_index += 2;
+                    continue
+                }
             }
             
-            if loop_index == last_index {
-                if cur_mul_by_index == last_index {
+            if index == mul_index {
+                if index == end_index && mul_index == end_index {
+                    nums_product[index] = cur_product;
                     break;
                 }
-
-                println!("loop_index matching last_index");
-                loop_index = 0;
-                cur_mul_by_index += 1;
+                mul_index += 1;
                 continue;
             }
-            loop_index += 1;
+
+            let mul_by = nums[mul_index];
+            cur_product *= mul_by;
+
+            if mul_index == end_index {
+                nums_product[index] = cur_product;
+                cur_product = 0;
+                index += 1;
+                mul_index = 0;
+                continue;
+            }
+
+            if index == end_index && mul_index == end_index {
+                nums_product[index] = cur_product;
+                break;
+            }
+
+            mul_index += 1;
         }
 
-        println!("nums_product: {:?}", nums_product);
         return nums_product;
     }
 }
@@ -64,5 +83,8 @@ mod tests {
     fn it_works() {
         assert_eq!(Solution::product_except_self(vec![1,2,3,4]), vec![24,12,8,6]);
         assert_eq!(Solution::product_except_self(vec![-1,1,0,-3,3]), vec![0,0,9,0,0]);
+        assert_eq!(Solution::product_except_self(vec![1,2]), vec![1,2]);
+        assert_eq!(Solution::product_except_self(vec![1,0]), vec![0,1]);
+        assert_eq!(Solution::product_except_self(vec![1,2,3]), vec![6,3,2]);
     }
 }
